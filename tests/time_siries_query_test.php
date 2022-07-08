@@ -30,7 +30,7 @@ $query = "SELECT COUNT(four) col ,ten da FROM bsm_monitor_value_hist WHERE four 
 $results = $conn->query( $query )->fetch_all();
 //var_dump($results);
 
-$ts = new TimeSiries($results,1,0);
+$ts = new TimeSeries($results,1,0);
 $ts->fill_missing_data("01h");
 var_dump($ts->data);
 

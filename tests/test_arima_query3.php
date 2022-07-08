@@ -42,13 +42,13 @@ $sql = "SELECT COUNT(four) col ,ten da FROM bsm_monitor_value_hist WHERE four LI
 
 // arima
 $order = array(0,1,1);
-$arc = new arimaContrller($order);
+$arc = new ArimaController($order);
 $res = $arc->setDataBaseConnection($link)->query($sql,"da" ,"col" ,"01h")->forecast(1);
 var_dump($res);
 
 
 // auto arima
-$arc = new autoArimaContrller("BIC");
+$arc = new AutoArimaController("BIC");
 $res = $arc->setDataBaseConnection($link)->query($sql , "da" ,"col" ,"01h")->forecast(1);
 var_dump($res);
 

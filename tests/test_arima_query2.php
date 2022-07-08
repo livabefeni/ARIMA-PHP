@@ -69,14 +69,14 @@ AND TIMESTAMP(dates.date) <= (SELECT TIMESTAMP(ten) FROM bsm_monitor_value_hist 
 
 // arima
 $order = array(0,1,1);
-$arc = new arimaContrller($order);
+$arc = new ArimaController($order);
 $res = $arc->setDataBaseConnection($link)->query($sql,"da" ,"col" )->forecast(1);
 var_dump($res);
 
 
 
 // auto arima
-$arc = new autoArimaContrller("BIC");
+$arc = new AutoArimaController("BIC");
 $res = $arc->setDataBaseConnection($link)->query($sql , "da" ,"col" )->forecast(1);
 var_dump($res);
 

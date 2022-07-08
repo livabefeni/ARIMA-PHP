@@ -1,12 +1,8 @@
 <?php
 
+namespace PhpArima;
 
-
-require_once __DIR__ . '/Auto_ARIMA.php';
-require_once __DIR__ . '/TimeSiries.php';
-
-
-class autoArimaContrller
+class AutoArimaController
 {
 
     public $dataArray;
@@ -24,13 +20,15 @@ class autoArimaContrller
     public $eval;
 
 
-    public function __construct($eval="AIC") {
+    public function __construct($eval = "AIC")
+    {
         $this->eval = $eval;
         $this->step = null;
     }
 
 
-    public function query($query , $date_column, $value_column ,$step=null){
+    public function query($query, $date_column, $value_column, $step = null)
+    {
         $this->dataArray = null;
         $this->date_column = $date_column;
         $this->value_column = $value_column;
@@ -40,7 +38,8 @@ class autoArimaContrller
     }
 
 
-    public function select($date_column, $value_column , $table){
+    public function select($date_column, $value_column, $table)
+    {
         $this->dataArray = null;
         $this->date_column = $date_column;
         $this->value_column = $value_column;
@@ -50,22 +49,25 @@ class autoArimaContrller
 
     }
 
-    public function where($where){
-        $this->query = $this->query." WHERE {$where}";
+    public function where($where)
+    {
+        $this->query = $this->query . " WHERE {$where}";
         return $this;
     }
 
-    public function orderBy($col , $desending = false){
-        $this->query = $this->query . " ORDER BY ".$col;
-        if ($desending){
-            $this->query = $this->query ." DESC";
+    public function orderBy($col, $desending = false)
+    {
+        $this->query = $this->query . " ORDER BY " . $col;
+        if ($desending) {
+            $this->query = $this->query . " DESC";
         }
         return $this;
     }
 
 
-    public function groupBy($q){
-        $this->query = $this->query . " GROUP BY ".$q;
+    public function groupBy($q)
+    {
+        $this->query = $this->query . " GROUP BY " . $q;
 
         return $this;
     }
@@ -79,7 +81,6 @@ class autoArimaContrller
     }
 
 
-
     public function setDataArray($dataArray)
     {
         $this->dataArray = $dataArray;
@@ -87,25 +88,19 @@ class autoArimaContrller
     }
 
 
-
-
-    public function get_results( $query, $object = false )
+    public function get_results($query, $object = false)
     {
 
 
         //Overwrite the $row var to null
         $row = null;
 
-        $results = $this->conn->query( $query );
-        if( $this->conn->error )
-        {
+        $results = $this->conn->query($query);
+        if ($this->conn->error) {
             echo $this->conn->error;
-        }
-        else
-        {
+        } else {
             $row = array();
-            while( $r = ( !$object ) ? $results->fetch_assoc() : $results->fetch_object() )
-            {
+            while ($r = (!$object) ? $results->fetch_assoc() : $results->fetch_object()) {
                 $row[] = $r;
             }
             return $row;
@@ -113,22 +108,23 @@ class autoArimaContrller
     }
 
 
-    public function excute(){
+    public function excute()
+    {
 
 
-        if(!$this->query){
+        if (!$this->query) {
 
-            die( "query is not defined ! \n");
+            die("query is not defined ! \n");
 
-        }else{
-            if($this->conn) {
+        } else {
+            if ($this->conn) {
 
                 $full_query = $this->get_results($this->query);
 
                 if (is_array($full_query)) {
 
-                    if($this->step){
-                        $ts = new TimeSiries($full_query,$this->date_column,$this->value_column);
+                    if ($this->step) {
+                        $ts = new TimeSeries($full_query, $this->date_column, $this->value_column);
 
                         $full_query = $ts->fill_missing_data($this->step);
                     }
@@ -138,7 +134,7 @@ class autoArimaContrller
                         if (is_double((double)$row[$this->value_column])) {
                             array_push($data, (double)$row[$this->value_column]);
                         } else {
-                            die( "query return data that is not numeric !!! \n");
+                            die("query return data that is not numeric !!! \n");
                         }
                     }
 
@@ -147,8 +143,8 @@ class autoArimaContrller
                     $this->dataArray = $data;
                 }
 //
-            }else{
-                die( "connection is not set ! \n");
+            } else {
+                die("connection is not set ! \n");
             }
         }
 
@@ -158,25 +154,26 @@ class autoArimaContrller
 
     }
 
-    public function getParms(){
-        return array($this->p,$this->d,$this->q);
+    public function getParms()
+    {
+        return array($this->p, $this->d, $this->q);
     }
 
     public function forecast($pred_num)
     {
 
-        if(!$this->dataArray){
+        if (!$this->dataArray) {
             $this->excute();
         }
 
 
         $results = array();
 
-        if($this->dataArray) {
+        if ($this->dataArray) {
             for ($i = 0; $i < $pred_num; $i++) {
                 $temp = array_merge($this->dataArray, $results);
 
-                $arima = new Auto_ARIMA($temp , $this->eval);
+                $arima = new AutoArima($temp, $this->eval);
 
                 $this->p = $arima->p;
                 $this->q = $arima->q;
@@ -194,7 +191,7 @@ class autoArimaContrller
     public function forecast2(array $to_pred)
     {
 
-        if(!$this->dataArray){
+        if (!$this->dataArray) {
             $this->excute();
         }
 
@@ -202,11 +199,11 @@ class autoArimaContrller
         $results = array();
         $orginal_results = array();
 
-        if($this->dataArray) {
+        if ($this->dataArray) {
             for ($i = 0; $i < count($to_pred); $i++) {
                 $temp = array_merge($this->dataArray, $orginal_results);
 
-                $arima = new Auto_ARIMA($temp , $this->eval);
+                $arima = new AutoArima($temp, $this->eval);
 
                 $this->p = $arima->p;
                 $this->q = $arima->q;

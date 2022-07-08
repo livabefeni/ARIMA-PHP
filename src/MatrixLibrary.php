@@ -1,23 +1,26 @@
 <?php
 
+namespace PhpArima;
+
 class MatrixLibrary
 {
 
-    public function multibly_matrices(array $a , array $b){
+    public function multibly_matrices(array $a, array $b)
+    {
 
-        $r=count($a);
-        $c=count($b[0]);
-        $p=count($b);
-        if(count($a[0]) != $p){
+        $r = count($a);
+        $c = count($b[0]);
+        $p = count($b);
+        if (count($a[0]) != $p) {
             echo "Incompatible matrices";
             exit(0);
         }
 
-        $result=array();
-        for ($i=0; $i < $r; $i++){
-            for($j=0; $j < $c; $j++){
+        $result = array();
+        for ($i = 0; $i < $r; $i++) {
+            for ($j = 0; $j < $c; $j++) {
                 $result[$i][$j] = 0;
-                for($k=0; $k < $p; $k++){
+                for ($k = 0; $k < $p; $k++) {
                     $result[$i][$j] += $a[$i][$k] * $b[$k][$j];
                 }
             }
@@ -25,6 +28,7 @@ class MatrixLibrary
         return $result;
 
     }
+
     //Gauss-Jordan elimination method for matrix inverse
     public function inverseMatrix(array $matrix)
     {
@@ -44,14 +48,11 @@ class MatrixLibrary
     {
         $numberOfRows = count($matrix);
 
-        for($i=0; $i<$numberOfRows; $i++)
-        {
+        for ($i = 0; $i < $numberOfRows; $i++) {
             $matrix = $this->oneOperation($matrix, $i, $i);
 
-            for($j=0; $j<$numberOfRows; $j++)
-            {
-                if($i !== $j)
-                {
+            for ($j = 0; $j < $numberOfRows; $j++) {
+                if ($i !== $j) {
                     $matrix = $this->zeroOperation($matrix, $j, $i, $i);
                 }
             }
@@ -63,23 +64,18 @@ class MatrixLibrary
 
     private function oneOperation(array $matrix, $rowPosition, $zeroPosition)
     {
-        if($matrix[$rowPosition][$zeroPosition] !== 1)
-        {
+        if ($matrix[$rowPosition][$zeroPosition] !== 1) {
             $numberOfCols = count($matrix[$rowPosition]);
 
-            if($matrix[$rowPosition][$zeroPosition] === 0)
-            {
+            if ($matrix[$rowPosition][$zeroPosition] === 0) {
                 $divisor = 0.0000000001;
                 $matrix[$rowPosition][$zeroPosition] = 0.0000000001;
-            }
-            else
-            {
+            } else {
                 $divisor = $matrix[$rowPosition][$zeroPosition];
             }
 
-            for($i=0; $i<$numberOfCols; $i++)
-            {
-                if($divisor != 0)
+            for ($i = 0; $i < $numberOfCols; $i++) {
+                if ($divisor != 0)
                     $matrix[$rowPosition][$i] = $matrix[$rowPosition][$i] / $divisor;
             }
         }
@@ -91,12 +87,10 @@ class MatrixLibrary
     {
         $numberOfCols = count($matrix[$rowPosition]);
 
-        if($matrix[$rowPosition][$zeroPosition] !== 0)
-        {
+        if ($matrix[$rowPosition][$zeroPosition] !== 0) {
             $numberToSubtract = $matrix[$rowPosition][$zeroPosition];
 
-            for($i=0; $i<$numberOfCols; $i++)
-            {
+            for ($i = 0; $i < $numberOfCols; $i++) {
                 $matrix[$rowPosition][$i] = $matrix[$rowPosition][$i] - $numberToSubtract * $matrix[$subjectRow][$i];
             }
         }
@@ -109,8 +103,7 @@ class MatrixLibrary
         $inverseMatrix = array();
         $matrixCount = count($matrix);
 
-        for($i=0; $i<$matrixCount; $i++)
-        {
+        for ($i = 0; $i < $matrixCount; $i++) {
             $inverseMatrix[$i] = array_slice($matrix[$i], $matrixCount);
         }
 
@@ -123,8 +116,7 @@ class MatrixLibrary
 
         $augmentedMatrix = array();
 
-        for($i=0; $i<count($matrix); $i++)
-        {
+        for ($i = 0; $i < count($matrix); $i++) {
             $augmentedMatrix[$i] = array_merge($matrix[$i], $identityMatrix[$i]);
         }
 
@@ -137,16 +129,11 @@ class MatrixLibrary
 
         $identityMatrix = array();
 
-        for($i=0; $i<$size; $i++)
-        {
-            for($j=0; $j<$size; $j++)
-            {
-                if($i == $j)
-                {
+        for ($i = 0; $i < $size; $i++) {
+            for ($j = 0; $j < $size; $j++) {
+                if ($i == $j) {
                     $identityMatrix[$i][$j] = 1;
-                }
-                else
-                {
+                } else {
                     $identityMatrix[$i][$j] = 0;
                 }
             }

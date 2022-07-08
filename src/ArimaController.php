@@ -1,13 +1,8 @@
 <?php
 
+namespace PhpArima;
 
-
-require_once __DIR__ . '/ARIMA.php';
-require_once __DIR__ . '/TimeSiries.php';
-
-
-
-class arimaContrller
+class ArimaController
 {
 
     public $dataArray;
@@ -23,9 +18,8 @@ class arimaContrller
     private $step;
 
 
-
-
-    public function __construct($order) {
+    public function __construct($order)
+    {
         $this->p = $order[0];
         $this->d = $order[1];
         $this->q = $order[2];
@@ -33,7 +27,8 @@ class arimaContrller
     }
 
 
-    public function query($query , $date_column, $value_column ,$step=null){
+    public function query($query, $date_column, $value_column, $step = null)
+    {
         $this->dataArray = null;
         $this->date_column = $date_column;
         $this->value_column = $value_column;
@@ -43,7 +38,8 @@ class arimaContrller
     }
 
 
-    public function select($date_column, $value_column , $table){
+    public function select($date_column, $value_column, $table)
+    {
         $this->dataArray = null;
         $this->date_column = $date_column;
         $this->value_column = $value_column;
@@ -53,22 +49,25 @@ class arimaContrller
 
     }
 
-    public function where($where){
-        $this->query = $this->query." WHERE {$where}";
+    public function where($where)
+    {
+        $this->query = $this->query . " WHERE {$where}";
         return $this;
     }
 
-    public function orderBy($col , $desending = false){
-        $this->query = $this->query . " ORDER BY ".$col;
-        if ($desending){
-            $this->query = $this->query ." DESC";
+    public function orderBy($col, $desending = false)
+    {
+        $this->query = $this->query . " ORDER BY " . $col;
+        if ($desending) {
+            $this->query = $this->query . " DESC";
         }
         return $this;
     }
 
 
-    public function groupBy($q){
-        $this->query = $this->query . " GROUP BY ".$q;
+    public function groupBy($q)
+    {
+        $this->query = $this->query . " GROUP BY " . $q;
 
         return $this;
     }
@@ -82,7 +81,6 @@ class arimaContrller
     }
 
 
-
     public function setDataArray($dataArray)
     {
         $this->dataArray = $dataArray;
@@ -90,25 +88,19 @@ class arimaContrller
     }
 
 
-
-
-    public function get_results( $query, $object = false )
+    public function get_results($query, $object = false)
     {
 
 
         //Overwrite the $row var to null
         $row = null;
 
-        $results = $this->conn->query( $query );
-        if( $this->conn->error )
-        {
+        $results = $this->conn->query($query);
+        if ($this->conn->error) {
             echo $this->conn->error;
-        }
-        else
-        {
+        } else {
             $row = array();
-            while( $r = ( !$object ) ? $results->fetch_assoc() : $results->fetch_object() )
-            {
+            while ($r = (!$object) ? $results->fetch_assoc() : $results->fetch_object()) {
                 $row[] = $r;
             }
             return $row;
@@ -116,22 +108,23 @@ class arimaContrller
     }
 
 
-    public function excute(){
+    public function excute()
+    {
 
 
-        if(!$this->query){
+        if (!$this->query) {
 
-            die( "query is not defined ! \n");
+            die("query is not defined ! \n");
 
-        }else{
-            if($this->conn) {
+        } else {
+            if ($this->conn) {
 
                 $full_query = $this->get_results($this->query);
 
                 if (is_array($full_query)) {
 
-                    if($this->step){
-                        $ts = new TimeSiries($full_query,$this->date_column,$this->value_column);
+                    if ($this->step) {
+                        $ts = new TimeSeries($full_query, $this->date_column, $this->value_column);
 
                         $full_query = $ts->fill_missing_data($this->step);
                     }
@@ -141,7 +134,7 @@ class arimaContrller
                         if (is_double((double)$row[$this->value_column])) {
                             array_push($data, (double)$row[$this->value_column]);
                         } else {
-                            die( "query return data that is not numeric !!! \n");
+                            die("query return data that is not numeric !!! \n");
                         }
                     }
 
@@ -149,8 +142,8 @@ class arimaContrller
 
                     $this->dataArray = $data;
                 }
-            }else{
-                die( "connection is not set ! \n");
+            } else {
+                die("connection is not set ! \n");
             }
         }
 
@@ -163,18 +156,18 @@ class arimaContrller
     public function forecast($pred_num)
     {
 
-        if(!$this->dataArray){
+        if (!$this->dataArray) {
             $this->excute();
         }
 
 
         $results = array();
 
-        if($this->dataArray) {
+        if ($this->dataArray) {
             for ($i = 0; $i < $pred_num; $i++) {
                 $temp = array_merge($this->dataArray, $results);
 
-                $arima = new ARIMA($temp, $this->p, $this->d, $this->q);
+                $arima = new Arima($temp, $this->p, $this->d, $this->q);
                 $res = $arima->forecast();
                 array_push($results, $res);
             }

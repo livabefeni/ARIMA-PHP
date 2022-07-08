@@ -1,0 +1,16 @@
+{
+  "name": "befeni/php-arima",
+  "description": "description",
+  "type": "library",
+  "authors": [
+    {
+      "name": "liva",
+      "email": "liva.ramarolahy@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "PhpArima\\": "src/"
+    }
+  }
+}

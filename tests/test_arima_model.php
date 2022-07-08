@@ -1,7 +1,7 @@
 <?php
 
 
-require_once __DIR__ . '/../src/arimaModel.php';
+
 
 $data = array(
     266.0,
@@ -30,13 +30,13 @@ $data = array(
 $order = array(1,1,1);
 
 
-$res = arimaModel::arima($data , $order);
+$res = ArimaModel::arima($data , $order);
 
 var_dump($res);
 
-$res= arimaModel::auto_arima($data);
+$res= ArimaModel::auto_arima($data);
 
-$pred_order = arimaModel::get_auto_arima_order();
+$pred_order = ArimaModel::get_auto_arima_order();
 
 var_dump($pred_order);
 var_dump($res);

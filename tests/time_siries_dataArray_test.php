@@ -20,7 +20,7 @@ $data = array(
 
 );
 
-$ts = new TimeSiries($data,'datetime','type');
+$ts = new TimeSeries($data,'datetime','type');
 
 var_dump($ts->fill_missing_data("01h"));
 
